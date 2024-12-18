@@ -8,6 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const frequencyControl = document.getElementById('frequency');
     const frequencyDisplay = document.getElementById('frequencyDisplay');
 
+    // 主题相关
+    const themeLinks = document.querySelectorAll('[data-theme]');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    themeLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            const theme = e.target.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+    });
+
     let count = parseInt(localStorage.getItem('muyuCount')) || 0;
     countDisplay.textContent = count;
 
