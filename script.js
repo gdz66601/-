@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const autoToggle = document.getElementById('autoToggle');
     const frequencyControl = document.getElementById('frequency');
     const frequencyDisplay = document.getElementById('frequencyDisplay');
+    const resetCount = document.getElementById('resetCount');
 
     // 主题相关
     const themeLinks = document.querySelectorAll('[data-theme]');
@@ -40,12 +41,54 @@ document.addEventListener('DOMContentLoaded', () => {
         '福德无量'
     ];
 
+    // 用于记录最近的祝福文字位置
+    let lastBlessingPositions = [];
+    const MIN_DISTANCE = 40; // 最小间距
+
+    function getRandomPosition(containerRect) {
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        while (attempts < maxAttempts) {
+            const x = Math.random() * (containerRect.width - 60); // 60是预估的文字宽度
+            const y = Math.random() * (containerRect.height - 30); // 30是预估的文字高度
+
+            // 检查与现有位置的距离
+            const isTooClose = lastBlessingPositions.some(pos => {
+                const dx = x - pos.x;
+                const dy = y - pos.y;
+                return Math.sqrt(dx * dx + dy * dy) < MIN_DISTANCE;
+            });
+
+            if (!isTooClose) {
+                // 添加新位置到数组
+                lastBlessingPositions.push({ x, y, time: Date.now() });
+                // 只保留最近2秒内的位置
+                lastBlessingPositions = lastBlessingPositions.filter(
+                    pos => Date.now() - pos.time < 2000
+                );
+                return { x, y };
+            }
+
+            attempts++;
+        }
+
+        // 如果找不到合适的位置，返回随机位置
+        return {
+            x: Math.random() * (containerRect.width - 60),
+            y: Math.random() * (containerRect.height - 30)
+        };
+    }
+
     function createBlessingElement(x, y) {
+        const containerRect = blessingContainer.getBoundingClientRect();
+        const position = getRandomPosition(containerRect);
+        
         const blessing = document.createElement('div');
         blessing.className = 'absolute text-success font-bold text-lg animate-float-up';
         blessing.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-        blessing.style.left = `${x}px`;
-        blessing.style.top = `${y}px`;
+        blessing.style.left = `${position.x}px`;
+        blessing.style.top = `${position.y}px`;
         blessingContainer.appendChild(blessing);
 
         // 动画结束后移除元素
@@ -63,11 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('muyuCount', count);
 
         // 创建祝福文字
-        const rect = muyu.getBoundingClientRect();
-        createBlessingElement(
-            event.clientX - rect.left,
-            event.clientY - rect.top
-        );
+        createBlessingElement();
 
         // 触感反馈
         if (navigator.vibrate) {
@@ -75,15 +114,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 清零功能
+    resetCount.addEventListener('click', () => {
+        count = 0;
+        countDisplay.textContent = count;
+        localStorage.setItem('muyuCount', count);
+    });
+
     function startAutoPlay() {
         if (autoPlayInterval) clearInterval(autoPlayInterval);
         const interval = 1000 / parseFloat(frequencyControl.value);
         autoPlayInterval = setInterval(() => {
-            const rect = muyu.getBoundingClientRect();
-            handleMuyuClick({
-                clientX: rect.left + rect.width / 2,
-                clientY: rect.top + rect.height / 2
-            });
+            handleMuyuClick();
         }, interval);
     }
 
@@ -129,11 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (event) => {
         if (event.code === 'Space') {
             event.preventDefault();
-            const rect = muyu.getBoundingClientRect();
-            handleMuyuClick({
-                clientX: rect.left + rect.width / 2,
-                clientY: rect.top + rect.height / 2
-            });
+            handleMuyuClick();
         }
     });
 
