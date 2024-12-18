@@ -14,8 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    themeLinks.forEach(link => {
+    // 修改主题切换事件监听
+    document.querySelectorAll('.dropdown-content li a').forEach(link => {
         link.addEventListener('click', (e) => {
+            e.preventDefault();
             const theme = e.target.getAttribute('data-theme');
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
