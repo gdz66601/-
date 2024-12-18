@@ -29,16 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createBlessingElement(x, y) {
         const blessing = document.createElement('div');
-        blessing.className = 'blessing';
+        blessing.className = 'absolute text-success font-bold text-lg animate-float-up';
         blessing.textContent = blessings[Math.floor(Math.random() * blessings.length)];
         blessing.style.left = `${x}px`;
         blessing.style.top = `${y}px`;
         blessingContainer.appendChild(blessing);
 
         // 动画结束后移除元素
-        blessing.addEventListener('animationend', () => {
-            blessing.remove();
-        });
+        setTimeout(() => blessing.remove(), 1000);
     }
 
     function handleMuyuClick(event) {
@@ -54,27 +52,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // 创建祝福文字
         const rect = muyu.getBoundingClientRect();
         createBlessingElement(
-            event.clientX - 20,
-            event.clientY - 20
+            event.clientX - rect.left,
+            event.clientY - rect.top
         );
 
         // 触感反馈
         if (navigator.vibrate) {
             navigator.vibrate(50);
         }
-
-        // 添加点击动画
-        muyu.classList.add('clicked');
-        setTimeout(() => muyu.classList.remove('clicked'), 100);
     }
 
     function startAutoPlay() {
         if (autoPlayInterval) clearInterval(autoPlayInterval);
         const interval = 1000 / parseFloat(frequencyControl.value);
         autoPlayInterval = setInterval(() => {
+            const rect = muyu.getBoundingClientRect();
             handleMuyuClick({
-                clientX: muyu.getBoundingClientRect().left + muyu.offsetWidth / 2,
-                clientY: muyu.getBoundingClientRect().top + muyu.offsetHeight / 2
+                clientX: rect.left + rect.width / 2,
+                clientY: rect.top + rect.height / 2
             });
         }, interval);
     }
@@ -98,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
     autoToggle.addEventListener('click', () => {
         isAutoPlaying = !isAutoPlaying;
         autoToggle.textContent = isAutoPlaying ? '停止自动' : '开始自动';
-        autoToggle.classList.toggle('active', isAutoPlaying);
+        autoToggle.classList.toggle('btn-error', isAutoPlaying);
+        autoToggle.classList.toggle('btn-primary', !isAutoPlaying);
         
         if (isAutoPlaying) {
             startAutoPlay();
@@ -120,10 +116,30 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (event) => {
         if (event.code === 'Space') {
             event.preventDefault();
+            const rect = muyu.getBoundingClientRect();
             handleMuyuClick({
-                clientX: muyu.getBoundingClientRect().left + muyu.offsetWidth / 2,
-                clientY: muyu.getBoundingClientRect().top + muyu.offsetHeight / 2
+                clientX: rect.left + rect.width / 2,
+                clientY: rect.top + rect.height / 2
             });
         }
     });
+
+    // 添加自定义动画
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes float-up {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+        }
+        .animate-float-up {
+            animation: float-up 1s ease-out forwards;
+        }
+    `;
+    document.head.appendChild(style);
 }); 
