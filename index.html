@@ -20,6 +20,18 @@
                 <label for="volume">音量调节</label>
                 <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5">
             </div>
+            
+            <div class="auto-control">
+                <div class="auto-header">
+                    <label>自动敲击</label>
+                    <button id="autoToggle" class="toggle-btn">开始自动</button>
+                </div>
+                <div class="frequency-control">
+                    <label for="frequency">频率(次/秒)</label>
+                    <input type="range" id="frequency" min="0.5" max="10" step="0.5" value="1">
+                    <span id="frequencyDisplay">1.0</span>
+                </div>
+            </div>
         </div>
 
         <div class="blessing" id="blessing"></div>

@@ -53,20 +53,70 @@ body {
 
 .controls {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.volume-control {
+.volume-control, .auto-control {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.volume-control label {
+.volume-control label, .auto-control label {
     color: #666;
 }
 
-.volume-control input[type="range"] {
+.auto-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.toggle-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.toggle-btn:hover {
+    background: #45a049;
+}
+
+.toggle-btn.active {
+    background: #f44336;
+}
+
+.toggle-btn.active:hover {
+    background: #e53935;
+}
+
+.frequency-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+#frequencyDisplay {
+    font-size: 14px;
+    color: #666;
+    min-width: 40px;
+}
+
+input[type="range"] {
     width: 200px;
     height: 6px;
     background: #ddd;
@@ -75,7 +125,7 @@ body {
     outline: none;
 }
 
-.volume-control input[type="range"]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 16px;
     height: 16px;
@@ -85,7 +135,7 @@ body {
     transition: background 0.2s;
 }
 
-.volume-control input[type="range"]::-webkit-slider-thumb:hover {
+input[type="range"]::-webkit-slider-thumb:hover {
     background: #45a049;
 }
 
