@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 主题相关
     const themeLinks = document.querySelectorAll('[data-theme]');
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'cupcake';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
     // 修改主题切换事件监听
