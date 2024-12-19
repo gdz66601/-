@@ -2,15 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // 木鱼元素
     const muyuTraditional = document.getElementById('muyu-traditional');
     const muyuIkun = document.getElementById('muyu-ikun');
-    const currentMuyu = () => document.querySelector(`#muyu-${muyuStyle.value}`);
+    const muyuStyleInputs = document.querySelectorAll('input[name="muyuStyle"]');
 
     // 音效元素
     const sounds = {
-        muyu: document.getElementById('sound-muyu'),
-        frog: document.getElementById('sound-frog'),
-        chicken: document.getElementById('sound-chicken')
+        traditional: document.getElementById('sound-muyu'),
+        ikun: document.getElementById('sound-chicken')
     };
-    const currentSound = () => sounds[soundEffect.value];
 
     const volumeControl = document.getElementById('volume');
     const countDisplay = document.getElementById('count');
@@ -19,8 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const frequencyControl = document.getElementById('frequency');
     const frequencyDisplay = document.getElementById('frequencyDisplay');
     const resetCount = document.getElementById('resetCount');
-    const muyuStyle = document.getElementById('muyuStyle');
-    const soundEffect = document.getElementById('soundEffect');
 
     // 主题相关
     const themeLinks = document.querySelectorAll('[data-theme]');
@@ -37,31 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 木鱼样式和音效设置
-    muyuStyle.addEventListener('change', (e) => {
-        const style = e.target.value;
-        // 保存选择
-        localStorage.setItem('muyuStyle', style);
-        // 切换木鱼样式
-        muyuTraditional.classList.toggle('hidden', style !== 'traditional');
-        muyuIkun.classList.toggle('hidden', style !== 'ikun');
-    });
+    // 获取当前木鱼样式
+    const getCurrentStyle = () => {
+        const selectedInput = document.querySelector('input[name="muyuStyle"]:checked');
+        return selectedInput ? selectedInput.value : 'traditional';
+    };
 
-    soundEffect.addEventListener('change', (e) => {
-        const effect = e.target.value;
-        // 保存选择
-        localStorage.setItem('soundEffect', effect);
-        // 音量同步
-        Object.values(sounds).forEach(sound => {
-            sound.volume = volumeControl.value;
+    // 木鱼样式切换
+    muyuStyleInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            const style = input.value;
+            // 保存选择
+            localStorage.setItem('muyuStyle', style);
+            // 切换木鱼样式
+            muyuTraditional.classList.toggle('hidden', style !== 'traditional');
+            muyuIkun.classList.toggle('hidden', style !== 'ikun');
         });
     });
 
     // 加载保存的设置
     const savedStyle = localStorage.getItem('muyuStyle') || 'traditional';
-    const savedEffect = localStorage.getItem('soundEffect') || 'muyu';
-    muyuStyle.value = savedStyle;
-    soundEffect.value = savedEffect;
+    document.querySelector(`input[name="muyuStyle"][value="${savedStyle}"]`).checked = true;
     // 应用保存的设置
     muyuTraditional.classList.toggle('hidden', savedStyle !== 'traditional');
     muyuIkun.classList.toggle('hidden', savedStyle !== 'ikun');
@@ -141,7 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const blessing = document.createElement('div');
         blessing.className = 'absolute text-success font-bold text-lg animate-float-up';
-        const currentBlessings = blessings[muyuStyle.value] || blessings.traditional;
+        const currentStyle = getCurrentStyle();
+        const currentBlessings = blessings[currentStyle];
         blessing.textContent = currentBlessings[Math.floor(Math.random() * currentBlessings.length)];
         blessing.style.left = `${position.x}px`;
         blessing.style.top = `${position.y}px`;
@@ -153,7 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleMuyuClick(event) {
         // 播放音效
-        const sound = currentSound();
+        const currentStyle = getCurrentStyle();
+        const sound = sounds[currentStyle];
         sound.currentTime = 0;
         sound.play();
 

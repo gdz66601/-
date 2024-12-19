@@ -31,8 +31,7 @@
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-8 flex flex-col md:flex-row items-start justify-center min-h-screen gap-6">
-        <!-- 主要木鱼界面 -->
+    <div class="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-screen">
         <div class="card bg-base-100 shadow-xl p-8 w-full max-w-md">
             <div class="flex flex-col items-center gap-6">
                 <!-- 木鱼SVG -->
@@ -48,6 +47,12 @@
                               class="fill-base-content hover:fill-primary transition-colors duration-300"/>
                     </svg>
                     <div id="blessing" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+                </div>
+
+                <!-- 木鱼选择 -->
+                <div class="join">
+                    <input class="join-item btn" type="radio" name="muyuStyle" value="traditional" aria-label="传统木鱼" checked />
+                    <input class="join-item btn" type="radio" name="muyuStyle" value="ikun" aria-label="蔡徐坤" />
                 </div>
 
                 <!-- 功德计数 -->
@@ -90,44 +95,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- 木鱼设置面板 -->
-        <div class="card bg-base-100 shadow-xl p-8 w-full max-w-xs">
-            <h2 class="card-title mb-4">木鱼设置</h2>
-            
-            <!-- 木鱼样式选择 -->
-            <div class="form-control w-full">
-                <label class="label">
-                    <span class="label-text">木鱼样式</span>
-                </label>
-                <select class="select select-bordered w-full" id="muyuStyle">
-                    <option value="traditional" selected>传统木鱼</option>
-                    <option value="ikun">蔡徐坤</option>
-                </select>
-            </div>
-
-            <!-- 音效选择 -->
-            <div class="form-control w-full mt-4">
-                <label class="label">
-                    <span class="label-text">敲击音效</span>
-                </label>
-                <select class="select select-bordered w-full" id="soundEffect">
-                    <option value="muyu" selected>传统木鱼音</option>
-                    <option value="frog">蛙叫声</option>
-                    <option value="chicken">鸡叫声</option>
-                </select>
-            </div>
-
-            <!-- 提示信息 -->
-            <div class="mt-6 text-sm text-base-content/70">
-                选择不同的木鱼样式和音效来体验不同的敲击效果
-            </div>
-        </div>
     </div>
 
     <!-- 音效文件 -->
     <audio id="sound-muyu" src="assets/muyu-sound.mp3"></audio>
-    <audio id="sound-frog" src="assets/frog-sound.mp3"></audio>
     <audio id="sound-chicken" src="assets/chicken-sound.mp3"></audio>
     
     <script src="script.js"></script>
