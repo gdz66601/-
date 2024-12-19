@@ -1,6 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const muyu = document.getElementById('muyu');
-    const sound = document.getElementById('woodfish-sound');
+    // 木鱼元素
+    const muyuTraditional = document.getElementById('muyu-traditional');
+    const muyuIkun = document.getElementById('muyu-ikun');
+    const currentMuyu = () => document.querySelector(`#muyu-${muyuStyle.value}`);
+
+    // 音效元素
+    const sounds = {
+        muyu: document.getElementById('sound-muyu'),
+        frog: document.getElementById('sound-frog'),
+        chicken: document.getElementById('sound-chicken')
+    };
+    const currentSound = () => sounds[soundEffect.value];
+
     const volumeControl = document.getElementById('volume');
     const countDisplay = document.getElementById('count');
     const blessingContainer = document.getElementById('blessing');
@@ -8,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const frequencyControl = document.getElementById('frequency');
     const frequencyDisplay = document.getElementById('frequencyDisplay');
     const resetCount = document.getElementById('resetCount');
+    const muyuStyle = document.getElementById('muyuStyle');
+    const soundEffect = document.getElementById('soundEffect');
 
     // 主题相关
     const themeLinks = document.querySelectorAll('[data-theme]');
@@ -24,24 +37,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // 木鱼样式和音效设置
+    muyuStyle.addEventListener('change', (e) => {
+        const style = e.target.value;
+        // 保存选择
+        localStorage.setItem('muyuStyle', style);
+        // 切换木鱼样式
+        muyuTraditional.classList.toggle('hidden', style !== 'traditional');
+        muyuIkun.classList.toggle('hidden', style !== 'ikun');
+    });
+
+    soundEffect.addEventListener('change', (e) => {
+        const effect = e.target.value;
+        // 保存选择
+        localStorage.setItem('soundEffect', effect);
+        // 音量同步
+        Object.values(sounds).forEach(sound => {
+            sound.volume = volumeControl.value;
+        });
+    });
+
+    // 加载保存的设置
+    const savedStyle = localStorage.getItem('muyuStyle') || 'traditional';
+    const savedEffect = localStorage.getItem('soundEffect') || 'muyu';
+    muyuStyle.value = savedStyle;
+    soundEffect.value = savedEffect;
+    // 应用保存的设置
+    muyuTraditional.classList.toggle('hidden', savedStyle !== 'traditional');
+    muyuIkun.classList.toggle('hidden', savedStyle !== 'ikun');
+
     let count = parseInt(localStorage.getItem('muyuCount')) || 0;
     countDisplay.textContent = count;
 
     // 设置初始音量
-    sound.volume = volumeControl.value;
+    Object.values(sounds).forEach(sound => {
+        sound.volume = volumeControl.value;
+    });
 
     // 自动敲击相关变量
     let isAutoPlaying = false;
     let autoPlayInterval = null;
 
     // 随机祝福语
-    const blessings = [
-        '功德+1',
-        '善哉善哉',
-        '阿弥陀佛',
-        '心诚则灵',
-        '福德无量'
-    ];
+    const blessings = {
+        traditional: [
+            '功德+1',
+            '善哉善哉',
+            '阿弥陀佛',
+            '心诚则灵',
+            '福德无量'
+        ],
+        ikun: [
+            '鸡你太美',
+            '只因你太美',
+            'Kun',
+            '篮球打的真好',
+            '律师函警告'
+        ]
+    };
 
     // 用于记录最近的祝福文字位置
     let lastBlessingPositions = [];
@@ -88,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const blessing = document.createElement('div');
         blessing.className = 'absolute text-success font-bold text-lg animate-float-up';
-        blessing.textContent = blessings[Math.floor(Math.random() * blessings.length)];
+        const currentBlessings = blessings[muyuStyle.value] || blessings.traditional;
+        blessing.textContent = currentBlessings[Math.floor(Math.random() * currentBlessings.length)];
         blessing.style.left = `${position.x}px`;
         blessing.style.top = `${position.y}px`;
         blessingContainer.appendChild(blessing);
@@ -99,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleMuyuClick(event) {
         // 播放音效
+        const sound = currentSound();
         sound.currentTime = 0;
         sound.play();
 
@@ -139,11 +194,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 点击事件监听
-    muyu.addEventListener('click', handleMuyuClick);
+    [muyuTraditional, muyuIkun].forEach(muyu => {
+        muyu.addEventListener('click', handleMuyuClick);
+    });
 
     // 音量控制
     volumeControl.addEventListener('input', (event) => {
-        sound.volume = event.target.value;
+        const volume = event.target.value;
+        Object.values(sounds).forEach(sound => {
+            sound.volume = volume;
+        });
     });
 
     // 自动播放控制
